@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Book of Judges Jeopardy</title>
+  <meta name="description" content="Ignite: Book of Judges Jeopardy. Host-run quiz board.">
+  <meta name="theme-color" content="#839b66">
+  <link rel="icon" href="images/leaf.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/fredoka.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+  <!-- Host toolbar -->
+  <nav class="toolbar" aria-label="Host controls">
+    <span></span>
+    <div class="toolbar-right">
+      <button class="tool" type="button" data-action="go-board" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 10h16M4 15h16M9.3 5v14M14.6 5v14"/></svg>
+        <span>Board</span>
+      </button>
+      <button class="tool" type="button" data-action="new-game">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2.1-5M5 4v4h4"/></svg>
+        <span>New game</span>
+      </button>
+      <button class="tool" type="button" data-action="fullscreen" title="Fullscreen (F)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        <span>Fullscreen</span>
+      </button>
+    </div>
+  </nav>
+
+  <main id="app">
+
+    <!-- 1. Title -->
+    <section class="screen" id="screen-title" data-screen="title">
+      <div class="frame">
+        <img class="deco deco-tl" src="images/leaf.svg" alt="">
+        <img class="deco deco-tr" src="images/flashlight.svg" alt="">
+        <img class="deco deco-bl" src="images/mug.svg" alt="">
+        <img class="deco deco-br" src="images/binoculars.svg" alt="">
+        <div class="frame-body">
+          <p class="kicker" data-text="title.kicker"></p>
+          <h1 class="display" data-text="title.heading"></h1>
+          <button class="pill pill-lg" type="button" data-action="start" data-text="title.button"></button>
+          <button class="link-btn" type="button" data-action="resume" hidden>Resume saved game</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Mode -->
+    <section class="screen" id="screen-mode" data-screen="mode">
+      <div class="frame">
+        <img class="deco deco-tl" src="images/leaf.svg" alt="">
+        <img class="deco deco-br" src="images/binoculars.svg" alt="">
+        <div class="frame-body">
+          <h2 class="heading">Choose your game</h2>
+          <div class="mode-grid">
+            <button class="mode-card" type="button" data-action="mode" data-mode="questions">
+              <img src="images/canoe.svg" alt="">
+              <strong>Questions only</strong>
+              <span>The board and questions exactly as the slides.</span>
+            </button>
+            <button class="mode-card" type="button" data-action="mode" data-mode="answers">
+              <img src="images/mug.svg" alt="">
+              <strong>With answers</strong>
+              <span>Questions as the slides, plus a button to reveal each answer.</span>
+            </button>
+          </div>
+          <button class="link-btn" type="button" data-action="go" data-to="title">Back</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Teams and scoring (optional, both modes) -->
+    <section class="screen" id="screen-players" data-screen="players">
+      <div class="frame">
+        <img class="deco deco-tr" src="images/flashlight.svg" alt="">
+        <img class="deco deco-bl" src="images/mug.svg" alt="">
+        <div class="frame-body">
+          <h2 class="heading">Who’s playing?</h2>
+          <form class="player-form" id="player-form" autocomplete="off">
+            <label class="sr-only" for="player-name">Player or team name</label>
+            <input id="player-name" type="text" maxlength="24" placeholder="Add a player or team">
+            <button class="pill" type="submit">Add</button>
+          </form>
+          <ul class="player-list" id="player-list"></ul>
+          <p class="hint" id="player-hint">Add players or teams to show scores on screen.</p>
+          <div class="row-actions">
+            <button class="link-btn" type="button" data-action="go" data-to="mode">Back</button>
+            <button class="pill pill-ghost" type="button" data-action="skip-scoring">Keep score off-line</button>
+            <button class="pill" type="button" data-action="players-done" id="players-done" disabled>Show scores on screen</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. How to play -->
+    <section class="screen" id="screen-rules" data-screen="rules">
+      <div class="rules">
+        <div class="rules-intro">
+          <h2 class="display rules-heading"></h2>
+          <img class="rules-van" src="images/campervan.svg" alt="">
+          <img class="rules-canoe" src="images/canoe.svg" alt="">
+          <img class="rules-flash" src="images/flashlight.svg" alt="">
+          <button class="pill pill-lg" type="button" data-action="go-board" data-text="rules.button"></button>
+        </div>
+        <ul class="notecards" id="notecards"></ul>
+      </div>
+    </section>
+
+    <!-- 5. Board -->
+    <section class="screen" id="screen-board" data-screen="board">
+      <div class="board-wrap">
+        <div class="board" id="board" role="grid" aria-label="Question board"></div>
+        <aside class="board-side">
+          <img class="deco side-binoculars" src="images/binoculars.svg" alt="">
+          <img class="deco side-mug" src="images/mug.svg" alt="">
+          <h2 class="display board-heading" data-text="board.heading"></h2>
+          <ul class="legend" id="legend"></ul>
+          <button class="bonus-tile" type="button" data-action="bonus" id="bonus-tile">
+            <span data-text="bonus.label"></span>
+          </button>
+          <img class="deco side-leaf" src="images/leaf.svg" alt="">
+        </aside>
+      </div>
+      <section class="scoreboard" id="scoreboard" aria-label="Scoreboard" hidden>
+        <ol class="scores" id="scores"></ol>
+        <button class="pill pill-ghost" type="button" data-action="final">Final scores</button>
+      </section>
+    </section>
+
+    <!-- 6. Question -->
+    <section class="screen" id="screen-clue" data-screen="clue">
+      <div class="frame frame-clue">
+        <img class="deco deco-tl" src="images/leaf.svg" alt="">
+        <img class="deco deco-tr" src="images/flashlight.svg" alt="">
+        <img class="deco deco-bl" src="images/mug.svg" alt="">
+        <img class="deco deco-br" src="images/binoculars.svg" alt="">
+        <div class="frame-body clue-body">
+          <h2 class="clue-title" id="clue-title"></h2>
+          <div class="clue-question" id="clue-question"></div>
+
+          <div class="answer" id="answer" hidden>
+            <p class="answer-label">Answer</p>
+            <p class="answer-text" id="answer-text"></p>
+            <p class="answer-ref" id="answer-ref"></p>
+          </div>
+
+          <div class="award" id="award" hidden>
+            <p class="award-label" id="award-label"></p>
+            <div class="award-list" id="award-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="clue-controls">
+        <button class="timer" type="button" data-action="timer" id="timer" aria-live="polite">
+          <svg viewBox="0 0 44 44" aria-hidden="true">
+            <circle class="timer-track" cx="22" cy="22" r="19"/>
+            <circle class="timer-ring" id="timer-ring" cx="22" cy="22" r="19"/>
+          </svg>
+          <span class="timer-num" id="timer-num">20</span>
+          <span class="timer-label" id="timer-label">Start timer</span>
+        </button>
+        <button class="pill" type="button" data-action="reveal" id="reveal-btn" hidden>Reveal answer</button>
+        <button class="pill pill-dark" type="button" data-action="go-board">Back to board</button>
+      </div>
+    </section>
+
+    <!-- 7. Final scores -->
+    <section class="screen" id="screen-final" data-screen="final">
+      <div class="frame">
+        <img class="deco deco-tl" src="images/leaf.svg" alt="">
+        <img class="deco deco-br" src="images/binoculars.svg" alt="">
+        <div class="frame-body">
+          <p class="kicker">Final scores</p>
+          <h2 class="display" id="winner"></h2>
+          <ol class="final-list" id="final-list"></ol>
+          <div class="row-actions">
+            <button class="link-btn" type="button" data-action="go-board">Back to board</button>
+            <button class="pill" type="button" data-action="new-game">New game</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="confirm" id="confirm">
+    <form method="dialog">
+      <p>Start a new game? The board and scores will be cleared.</p>
+      <div class="row-actions">
+        <button class="link-btn" value="cancel">Cancel</button>
+        <button class="pill" value="ok">Start new game</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/questions.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
